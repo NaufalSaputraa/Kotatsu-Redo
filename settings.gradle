@@ -30,3 +30,9 @@ dependencyResolutionManagement {
 
 include ':app'
 rootProject.name = "Kotatsu"
+
+includeBuild('../kotatsu-parsers-redo') {
+	dependencySubstitution {
+		substitute module('com.github.clquwu:kotatsu-parsers-redo') using project(':')
+	}
+}
