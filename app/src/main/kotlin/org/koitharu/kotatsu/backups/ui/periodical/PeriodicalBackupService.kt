@@ -67,11 +67,11 @@ class PeriodicalBackupService : CoroutineIntentService() {
 			.setDefaults(0)
 			.setSilent(true)
 			.setAutoCancel(true)
-		val title = getString(R.string.periodic_backups)
-		val message = getString(
+		val title = applicationContext.getString(R.string.periodic_backups)
+		val message = applicationContext.getString(
 			R.string.inline_preference_pattern,
-			getString(R.string.packup_creation_failed),
-			error.getDisplayMessage(resources),
+			applicationContext.getString(R.string.packup_creation_failed),
+			error.getDisplayMessage(applicationContext.resources),
 		)
 		notification
 			.setContentText(message)
@@ -79,7 +79,7 @@ class PeriodicalBackupService : CoroutineIntentService() {
 			.setStyle(
 				NotificationCompat.BigTextStyle()
 					.bigText(message)
-					.setSummaryText(getString(R.string.packup_creation_failed))
+					.setSummaryText(applicationContext.getString(R.string.packup_creation_failed))
 					.setBigContentTitle(title),
 			)
 		ErrorReporterReceiver.getNotificationAction(applicationContext, error, startId, TAG)?.let { action ->

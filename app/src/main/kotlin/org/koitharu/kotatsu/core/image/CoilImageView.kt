@@ -6,6 +6,9 @@ import android.util.AttributeSet
 import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.withStyledAttributes
+import android.content.ContextWrapper
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import coil3.ImageLoader
@@ -38,6 +41,31 @@ import org.koitharu.kotatsu.core.util.ext.mangaSourceExtra
 import org.koitharu.kotatsu.reader.ui.pager.ReaderPage
 import java.util.LinkedList
 import javax.inject.Inject
+
+private fun Context.findLifecycleOwner(): LifecycleOwner? {
+	var cur: Context? = this
+	while (cur != null) {
+		if (cur is LifecycleOwner) {
+			return cur
+		}
+		if (cur.javaClass.name.contains("FragmentContextWrapper")) {
+			try {
+				val fragment = cur.javaClass.getMethod("getFragment").invoke(cur) as? Fragment
+				if (fragment != null) {
+					return try {
+						fragment.viewLifecycleOwner
+					} catch (e: IllegalStateException) {
+						fragment
+					}
+				}
+			} catch (e: Exception) {
+				// ignore
+			}
+		}
+		cur = (cur as? ContextWrapper)?.baseContext
+	}
+	return null
+}
 
 @AndroidEntryPoint
 open class CoilImageView @JvmOverloads constructor(
@@ -165,7 +193,7 @@ open class CoilImageView @JvmOverloads constructor(
 	}
 
 	protected open fun newRequestBuilder() = ImageRequest.Builder(context).apply {
-		lifecycle(findViewTreeLifecycleOwner())
+		lifecycle(findViewTreeLifecycleOwner() ?: context.findLifecycleOwner())
 		val crossfadeDuration = if (context.isAnimationsEnabled) {
 			(context.getAnimationDuration(R.integer.config_defaultAnimTime) * crossfadeDurationFactor).toInt()
 		} else {
