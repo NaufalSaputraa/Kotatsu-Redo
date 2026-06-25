@@ -51,13 +51,16 @@ android {
 			applicationIdSuffix = '.debug'
 		}
 		release {
+			signingConfig signingConfigs.debug
 			minifyEnabled true
 			shrinkResources true
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 		nightly {
 			initWith release
+			signingConfig signingConfigs.debug
 			applicationIdSuffix = '.nightly'
+			matchingFallbacks = ['release']
 		}
 	}
 	buildFeatures {
