@@ -1,4 +1,4 @@
-name: Build and Release Debug APK
+name: Build and Release APK
 
 on:
   push:
@@ -33,24 +33,33 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x Kotatsu/gradlew
 
-      - name: Build Debug APK
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/kotatsu-release.jks
+
+      - name: Build Release APK
+        env:
+          KEYSTORE_FILE: ${{ github.workspace }}/kotatsu-release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           cd Kotatsu
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease
 
       - name: Rename APK
         run: |
-          mv Kotatsu/app/build/outputs/apk/debug/app-debug.apk Kotatsu/app/build/outputs/apk/debug/Kotatsu-debug.apk
+          mv Kotatsu/app/build/outputs/apk/release/app-release.apk Kotatsu/app/build/outputs/apk/release/Kotatsu-release.apk
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: debug-${{ github.run_number }}
-          name: "Debug Build #${{ github.run_number }}"
+          tag_name: v${{ github.run_number }}
+          name: "Release Build #${{ github.run_number }}"
           body: |
-            Automated debug build from commit ${{ github.sha }}
+            Automated release build from commit ${{ github.sha }}
             
             This release contains the latest changes to the app and the custom parser.
           draft: false
           prerelease: false
-          files: Kotatsu/app/build/outputs/apk/debug/Kotatsu-debug.apk
+          files: Kotatsu/app/build/outputs/apk/release/Kotatsu-release.apk

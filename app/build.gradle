@@ -24,6 +24,18 @@ android {
         includeInBundle = false
     }
 
+	signingConfigs {
+		release {
+			def keystoreFile = System.getenv('KEYSTORE_FILE')
+			if (keystoreFile != null && file(keystoreFile).exists()) {
+				storeFile file(keystoreFile)
+				storePassword System.getenv('KEYSTORE_PASSWORD')
+				keyAlias System.getenv('KEY_ALIAS')
+				keyPassword System.getenv('KEY_PASSWORD')
+			}
+		}
+	}
+
     defaultConfig {
 		applicationId 'io.github.kotatsuredo.kotatsu'
 		minSdk = 23
@@ -51,14 +63,14 @@ android {
 			applicationIdSuffix = '.debug'
 		}
 		release {
-			signingConfig signingConfigs.debug
+			signingConfig signingConfigs.release.storeFile != null ? signingConfigs.release : signingConfigs.debug
 			minifyEnabled true
 			shrinkResources true
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 		nightly {
 			initWith release
-			signingConfig signingConfigs.debug
+			signingConfig signingConfigs.release.storeFile != null ? signingConfigs.release : signingConfigs.debug
 			applicationIdSuffix = '.nightly'
 			matchingFallbacks = ['release']
 		}

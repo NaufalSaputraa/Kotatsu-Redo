@@ -26,5 +26,7 @@
 .externalNativeBuild
 .cxx
 /.idea/deviceManager.xml
-/.kotlin/
 /.idea/AndroidProjectSystem.xml
+/.kotlin/
+*.jks
+*.keystore
