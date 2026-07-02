@@ -100,7 +100,11 @@ class FeedViewModel @Inject constructor(
 			}
 		}
 	}.catch { e ->
-		emit(listOf(e.toErrorState(canRetry = true)))
+		android.util.Log.e("FeedViewModel", "Error in content flow", e)
+		val detailMessage = "${e.javaClass.simpleName}: ${e.message}\n" +
+				e.stackTrace.take(3).joinToString("\n") { "at ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})" }
+		val debugException = RuntimeException(detailMessage, e)
+		emit(listOf(debugException.toErrorState(canRetry = true)))
 	}.stateIn(viewModelScope + Dispatchers.Default, SharingStarted.Eagerly, listOf(LoadingState()))
 
 	init {
