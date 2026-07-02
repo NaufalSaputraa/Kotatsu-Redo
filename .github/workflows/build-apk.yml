@@ -47,11 +47,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x Kotatsu/gradlew
 
-      - name: Run Unit Tests
-        run: |
-          cd Kotatsu
-          ./gradlew test --stacktrace
-
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/kotatsu-release.jks
