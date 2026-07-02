@@ -34,7 +34,7 @@ class FeedAdapter(
 			),
 		)
 		addDelegate(ListItemType.FOOTER_LOADING, loadingFooterAD())
-		addDelegate(ListItemType.STATE_LOADING, loadingStateAD())
+		addDelegate(ListItemType.STATE_LOADING, feedLoadingStateAD())
 		addDelegate(ListItemType.FOOTER_ERROR, errorFooterAD(listener))
 		addDelegate(ListItemType.STATE_ERROR, errorStateListAD(listener))
 		addDelegate(ListItemType.HEADER, listHeaderAD(listener))

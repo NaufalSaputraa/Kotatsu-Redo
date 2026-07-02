@@ -26,7 +26,7 @@ import org.koitharu.kotatsu.core.util.ext.addMenuProvider
 import org.koitharu.kotatsu.core.util.ext.consumeAll
 import org.koitharu.kotatsu.core.util.ext.observe
 import org.koitharu.kotatsu.core.util.ext.observeEvent
-import org.koitharu.kotatsu.databinding.FragmentListBinding
+import org.koitharu.kotatsu.databinding.FragmentFeedBinding
 import org.koitharu.kotatsu.list.domain.ListFilterOption
 import org.koitharu.kotatsu.list.ui.adapter.MangaListListener
 import org.koitharu.kotatsu.list.ui.adapter.TypedListSpacingDecoration
@@ -41,7 +41,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class FeedFragment :
-	BaseFragment<FragmentListBinding>(),
+	BaseFragment<FragmentFeedBinding>(),
 	PaginationScrollListener.Callback,
 	RecyclerViewOwner,
 	MangaListListener,
@@ -58,13 +58,12 @@ class FeedFragment :
 	override fun onCreateViewBinding(
 		inflater: LayoutInflater,
 		container: ViewGroup?,
-	) = FragmentListBinding.inflate(inflater, container, false)
+	) = FragmentFeedBinding.inflate(inflater, container, false)
 
-	override fun onViewBindingCreated(binding: FragmentListBinding, savedInstanceState: Bundle?) {
+	override fun onViewBindingCreated(binding: FragmentFeedBinding, savedInstanceState: Bundle?) {
 		super.onViewBindingCreated(binding, savedInstanceState)
 		val sizeResolver = StaticItemSizeResolver(resources.getDimensionPixelSize(R.dimen.smaller_grid_width))
-		val feedAdapter = FeedAdapter(this, sizeResolver) { item, v ->
-			viewModel.onItemClick(item)
+		val feedAdapter = FeedAdapter(this, sizeResolver) { item, _ ->
 			router.openDetails(item.toMangaWithOverride())
 		}
 		with(binding.recyclerView) {
@@ -78,7 +77,27 @@ class FeedFragment :
 			RecyclerScrollKeeper(this).attach()
 		}
 		binding.swipeRefreshLayout.setOnRefreshListener(this)
-		addMenuProvider(FeedMenuProvider(binding.recyclerView, viewModel))
+		addMenuProvider(FeedMenuProvider(viewModel))
+
+		binding.chipGroupRange.setOnCheckedStateChangeListener { _, checkedIds ->
+			val range = when (checkedIds.firstOrNull()) {
+				R.id.chip_daily -> org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.DAILY
+				R.id.chip_monthly -> org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.MONTHLY
+				else -> org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.WEEKLY
+			}
+			viewModel.timeRange.value = range
+		}
+
+		viewModel.timeRange.observe(viewLifecycleOwner) { range ->
+			val targetId = when (range) {
+				org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.DAILY -> R.id.chip_daily
+				org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.WEEKLY -> R.id.chip_weekly
+				org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.MONTHLY -> R.id.chip_monthly
+			}
+			if (binding.chipGroupRange.checkedChipId != targetId) {
+				binding.chipGroupRange.check(targetId)
+			}
+		}
 
 		viewModel.isHeaderEnabled.drop(1).observe(viewLifecycleOwner, MenuInvalidator(requireActivity()))
 		viewModel.content.observe(viewLifecycleOwner, feedAdapter)
@@ -116,7 +135,9 @@ class FeedFragment :
 
 	override fun onFilterOptionClick(option: ListFilterOption) = viewModel.toggleFilterOption(option)
 
-	override fun onRetryClick(error: Throwable) = Unit
+	override fun onRetryClick(error: Throwable) {
+		viewModel.update()
+	}
 
 	override fun onFilterClick(view: View?) = Unit
 

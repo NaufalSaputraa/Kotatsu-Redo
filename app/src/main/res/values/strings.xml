@@ -529,6 +529,10 @@
     <string name="select_feed_sources">Select Feed Sources</string>
     <string name="feed_sources_summary">Select sources to show in the popular Feed tab</string>
     <string name="failed_to_load_sources">Failed to load content from: %1$s</string>
+    <string name="time_range">Time range</string>
+    <string name="time_range_daily">Daily</string>
+    <string name="time_range_weekly">Weekly</string>
+    <string name="time_range_monthly">Monthly</string>
     <string name="manual">Manual</string>
     <string name="available_d">Available: %1$d</string>
     <string name="disable_nsfw_summary">Disable NSFW sources and hide adult manga from list if possible</string>

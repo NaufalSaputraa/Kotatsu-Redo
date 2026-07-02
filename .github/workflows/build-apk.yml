@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: Kotatsu
+          fetch-depth: 0
 
       - name: Checkout Parsers
         uses: actions/checkout@v4
@@ -30,12 +31,34 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Cache Gradle Build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            Kotatsu/.gradle
+            Kotatsu/build
+            Kotatsu/app/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('Kotatsu/**/*.gradle*', 'Kotatsu/gradle.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
       - name: Grant execute permission for gradlew
         run: chmod +x Kotatsu/gradlew
+
+      - name: Run Unit Tests
+        run: |
+          cd Kotatsu
+          ./gradlew test --stacktrace
 
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/kotatsu-release.jks
+
+      - name: Generate Version Code
+        id: version
+        run: echo "version_code=${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Build Release APK
         env:
@@ -45,7 +68,8 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           cd Kotatsu
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease \
+            -PversionCodeOverride=${{ steps.version.outputs.version_code }}
 
       - name: Rename APK
         run: |
