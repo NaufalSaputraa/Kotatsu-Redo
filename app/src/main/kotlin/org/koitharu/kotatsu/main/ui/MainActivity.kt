@@ -109,6 +109,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), AppBarOwner, BottomNav
 		get() = viewBinding.bottomNav
 
 	override fun onCreate(savedInstanceState: Bundle?) {
+		val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+		Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+			try {
+				val file = java.io.File(getExternalFilesDir(null), "crash.txt")
+				file.writeText(throwable.stackTraceToString())
+			} catch (e: Exception) {
+				// ignore
+			}
+			defaultHandler?.uncaughtException(thread, throwable)
+		}
+
 		super.onCreate(savedInstanceState)
 		setContentView(ActivityMainBinding.inflate(layoutInflater))
 		setSupportActionBar(viewBinding.searchBar)
