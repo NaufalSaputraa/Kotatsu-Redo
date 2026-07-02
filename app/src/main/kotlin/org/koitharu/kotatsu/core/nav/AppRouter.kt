@@ -288,6 +288,10 @@ class AppRouter private constructor(
         startActivity(sourcesSettingsIntent(contextOrNull() ?: return))
     }
 
+    fun openFeedSourcesSettings() {
+        startActivity(feedSourcesSettingsIntent(contextOrNull() ?: return))
+    }
+
     fun openDiscordSettings() {
         startActivity(discordSettingsIntent(contextOrNull() ?: return))
     }
@@ -781,6 +785,10 @@ class AppRouter private constructor(
             Intent(context, SettingsActivity::class.java)
                 .setAction(ACTION_SOURCES)
 
+        fun feedSourcesSettingsIntent(context: Context) =
+            Intent(context, SettingsActivity::class.java)
+                .setAction(ACTION_FEED_SOURCES)
+
         fun manageSourcesIntent(context: Context) =
             Intent(context, SettingsActivity::class.java)
                 .setAction(ACTION_MANAGE_SOURCES)
@@ -852,6 +860,7 @@ class AppRouter private constructor(
         const val ACTION_READER = "${BuildConfig.APPLICATION_ID}.action.MANAGE_READER_SETTINGS"
         const val ACTION_SOURCE = "${BuildConfig.APPLICATION_ID}.action.MANAGE_SOURCE_SETTINGS"
         const val ACTION_SOURCES = "${BuildConfig.APPLICATION_ID}.action.MANAGE_SOURCES"
+        const val ACTION_FEED_SOURCES = "${BuildConfig.APPLICATION_ID}.action.MANAGE_FEED_SOURCES"
         const val ACTION_MANAGE_DISCORD = "${BuildConfig.APPLICATION_ID}.action.MANAGE_DISCORD"
         const val ACTION_SUGGESTIONS = "${BuildConfig.APPLICATION_ID}.action.MANAGE_SUGGESTIONS"
         const val ACTION_TRACKER = "${BuildConfig.APPLICATION_ID}.action.MANAGE_TRACKER"

@@ -35,6 +35,7 @@ import org.koitharu.kotatsu.settings.discord.DiscordSettingsFragment
 import org.koitharu.kotatsu.settings.search.SettingsItem
 import org.koitharu.kotatsu.settings.search.SettingsSearchFragment
 import org.koitharu.kotatsu.settings.search.SettingsSearchViewModel
+import org.koitharu.kotatsu.settings.sources.FeedSourcesSettingsFragment
 import org.koitharu.kotatsu.settings.sources.SourceSettingsFragment
 import org.koitharu.kotatsu.settings.sources.SourcesSettingsFragment
 import org.koitharu.kotatsu.settings.sources.manage.SourcesManageFragment
@@ -150,6 +151,7 @@ class SettingsActivity :
 			AppRouter.ACTION_TRACKER -> TrackerSettingsFragment()
 			AppRouter.ACTION_PERIODIC_BACKUP -> PeriodicalBackupSettingsFragment()
 			AppRouter.ACTION_SOURCES -> SourcesSettingsFragment()
+			AppRouter.ACTION_FEED_SOURCES -> FeedSourcesSettingsFragment()
 			AppRouter.ACTION_MANAGE_DISCORD -> DiscordSettingsFragment()
 			AppRouter.ACTION_PROXY -> ProxySettingsFragment()
 			AppRouter.ACTION_MANAGE_DOWNLOADS -> DownloadsSettingsFragment()

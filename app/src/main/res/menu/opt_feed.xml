@@ -9,4 +9,10 @@
 		android:title="@string/update"
 		app:showAsAction="never" />
 
+	<item
+		android:id="@+id/action_feed_sources"
+		android:orderInCategory="60"
+		android:title="@string/feed_sources"
+		app:showAsAction="never" />
+
 </menu>

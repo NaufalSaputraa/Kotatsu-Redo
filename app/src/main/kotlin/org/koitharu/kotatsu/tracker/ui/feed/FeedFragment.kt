@@ -77,7 +77,7 @@ class FeedFragment :
 			RecyclerScrollKeeper(this).attach()
 		}
 		binding.swipeRefreshLayout.setOnRefreshListener(this)
-		addMenuProvider(FeedMenuProvider(viewModel))
+		addMenuProvider(FeedMenuProvider(viewModel) { router.openFeedSourcesSettings() })
 
 		binding.chipDaily.setOnClickListener {
 			viewModel.timeRange.value = org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.DAILY
