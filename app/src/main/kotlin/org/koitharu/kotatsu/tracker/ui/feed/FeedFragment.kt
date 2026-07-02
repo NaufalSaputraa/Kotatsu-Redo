@@ -35,6 +35,7 @@ import org.koitharu.kotatsu.list.ui.model.MangaListModel
 import org.koitharu.kotatsu.list.ui.size.StaticItemSizeResolver
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.model.MangaTag
+import org.koitharu.kotatsu.core.model.getTitle
 import org.koitharu.kotatsu.tracker.ui.feed.adapter.FeedAdapter
 import javax.inject.Inject
 
@@ -84,6 +85,16 @@ class FeedFragment :
 		viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(binding.recyclerView, this))
 		viewModel.onActionDone.observeEvent(viewLifecycleOwner, ReversibleActionObserver(binding.recyclerView))
 		viewModel.isRunning.observe(viewLifecycleOwner, this::onIsTrackerRunningChanged)
+		viewModel.failedSources.observe(viewLifecycleOwner) { failed ->
+			if (failed.isNotEmpty()) {
+				val names = failed.joinToString(", ") { it.getTitle(requireContext()) }
+				com.google.android.material.snackbar.Snackbar.make(
+					binding.recyclerView,
+					getString(R.string.failed_to_load_sources, names),
+					com.google.android.material.snackbar.Snackbar.LENGTH_LONG
+				).show()
+			}
+		}
 	}
 
 	override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {

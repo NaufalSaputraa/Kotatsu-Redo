@@ -82,6 +82,10 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 			}
 		}
 
+	var feedSources: Set<String>
+		get() = prefs.getStringSet(KEY_FEED_SOURCES, null) ?: emptySet()
+		set(value) = prefs.edit { putStringSet(KEY_FEED_SOURCES, value) }
+
 	val isNavLabelsVisible: Boolean
 		get() = prefs.getBoolean(KEY_NAV_LABELS, true)
 
@@ -882,6 +886,7 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		const val KEY_BACKUP_TG_ENABLED = "backup_periodic_tg_enabled"
 		const val KEY_BACKUP_TG_CHAT = "backup_periodic_tg_chat_id"
 		const val KEY_MANGA_LIST_BADGES = "manga_list_badges"
+		const val KEY_FEED_SOURCES = "feed_sources"
 		const val KEY_DISCORD_RPC = "discord_rpc"
 		const val KEY_DISCORD_RPC_SKIP_NSFW = "discord_rpc_skip_nsfw"
 		const val KEY_DISCORD_TOKEN = "discord_token"
