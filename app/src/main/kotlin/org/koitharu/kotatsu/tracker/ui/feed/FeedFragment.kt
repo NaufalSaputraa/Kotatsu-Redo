@@ -79,13 +79,14 @@ class FeedFragment :
 		binding.swipeRefreshLayout.setOnRefreshListener(this)
 		addMenuProvider(FeedMenuProvider(viewModel))
 
-		binding.chipGroupRange.setOnCheckedStateChangeListener { _, checkedIds ->
-			val range = when (checkedIds.firstOrNull()) {
-				R.id.chip_daily -> org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.DAILY
-				R.id.chip_monthly -> org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.MONTHLY
-				else -> org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.WEEKLY
-			}
-			viewModel.timeRange.value = range
+		binding.chipDaily.setOnClickListener {
+			viewModel.timeRange.value = org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.DAILY
+		}
+		binding.chipWeekly.setOnClickListener {
+			viewModel.timeRange.value = org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.WEEKLY
+		}
+		binding.chipMonthly.setOnClickListener {
+			viewModel.timeRange.value = org.koitharu.kotatsu.tracker.domain.GetPopularFeedUseCase.TimeRange.MONTHLY
 		}
 
 		viewModel.timeRange.observe(viewLifecycleOwner) { range ->
